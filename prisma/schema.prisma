@@ -13,8 +13,18 @@ generator client {
   provider = "prisma-client-js"
 }
 
+
+enum userRole {
+  MANAGER
+  STUDENT
+}
+
 model user {
-  id             String    @id @default(auto()) @map("_id") @db.ObjectId
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  name          String
+  email         String
+  emailVerified Boolean
+  image         String?
   username       String
   phoneNumber    String
   fatherName     String?
@@ -23,18 +33,64 @@ model user {
   guardianNumber String?
   currentAddress String
   homeAddress    String
-  imgUrl         String?
-  role           UserRole // "student" | "manager"
+  role           userRole // "student" | "manager"
   payments       Payment[]
   bills          Bill[]
 
+  createdAt     DateTime
+  updatedAt     DateTime
+  sessions      Session[]
+  accounts      Account[]
+
+  @@unique([email])
   @@map("users")
 }
 
-enum UserRole {
-  manager
-  student
+model Session {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  expiresAt DateTime
+  token     String
+  createdAt DateTime
+  updatedAt DateTime
+  ipAddress String?
+  userAgent String?
+  userId    String   @db.ObjectId
+  user      user     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@map("session")
 }
+
+model Account {
+  id                    String  @id @default(auto()) @map("_id") @db.ObjectId
+  accountId             String
+  providerId            String
+  userId                String   @db.ObjectId
+  user                  user      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime
+  updatedAt             DateTime
+
+  @@map("account")
+}
+
+model Verification {
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime?
+  updatedAt  DateTime?
+
+  @@map("verification")
+}
+
 
 model Dish {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
