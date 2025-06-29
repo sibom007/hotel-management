@@ -1,0 +1,77 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model user {
+  id             String    @id @default(auto()) @map("_id") @db.ObjectId
+  username       String
+  phoneNumber    String
+  fatherName     String?
+  fatherNumber   String?
+  guardianName   String?
+  guardianNumber String?
+  currentAddress String
+  homeAddress    String
+  imgUrl         String?
+  role           UserRole // "student" | "manager"
+  payments       Payment[]
+  bills          Bill[]
+
+  @@map("users")
+}
+
+enum UserRole {
+  manager
+  student
+}
+
+model Dish {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String?
+  price       Float
+  available   Boolean // true = dish is ready for today
+  createdAt   DateTime @default(now())
+
+  BillItem BillItem[]
+}
+
+model Bill {
+  id     String     @id @default(auto()) @map("_id") @db.ObjectId
+  userId String     @db.ObjectId
+  user   user       @relation(fields: [userId], references: [id])
+  date   DateTime   @default(now())
+  items  BillItem[]
+  total  Float
+  paid   Boolean    @default(false)
+}
+
+model BillItem {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  billId   String @db.ObjectId
+  bill     Bill   @relation(fields: [billId], references: [id])
+  dishId   String @db.ObjectId
+  dish     Dish   @relation(fields: [dishId], references: [id])
+  quantity Int
+  price    Float
+}
+
+model Payment {
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId  String   @db.ObjectId
+  user    user     @relation(fields: [userId], references: [id])
+  amount  Float
+  paidAt  DateTime @default(now())
+  billIds String[] // list of Bill ids paid with this payment
+}

@@ -1,5 +1,6 @@
 import { TextEffect } from "@/components/motion-primitives/text-effect";
 
+
 export default function Home() {
   return (
     <div className="text-3xl text-center font-bold text-orange-500 flex items-center justify-center h-40">
