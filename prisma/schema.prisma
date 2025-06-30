@@ -20,20 +20,20 @@ enum userRole {
 }
 
 model user {
-  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  id            String   @id @map("_id") 
   name          String
-  email         String
+  email         String  
   emailVerified Boolean
   image         String?
-  username       String
-  phoneNumber    String
+  username       String?
+  phoneNumber    String?
   fatherName     String?
   fatherNumber   String?
   guardianName   String?
   guardianNumber String?
-  currentAddress String
-  homeAddress    String
-  role           userRole // "student" | "manager"
+  currentAddress String?
+  homeAddress    String?
+  role           userRole @default(STUDENT) // "student" | "manager"
   payments       Payment[]
   bills          Bill[]
 
@@ -47,14 +47,14 @@ model user {
 }
 
 model Session {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  id        String   @id  @map("_id") 
   expiresAt DateTime
   token     String
   createdAt DateTime
   updatedAt DateTime
   ipAddress String?
   userAgent String?
-  userId    String   @db.ObjectId
+  userId    String  
   user      user     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([token])
@@ -62,10 +62,10 @@ model Session {
 }
 
 model Account {
-  id                    String  @id @default(auto()) @map("_id") @db.ObjectId
+  id                    String  @id  @map("_id") 
   accountId             String
   providerId            String
-  userId                String   @db.ObjectId
+  userId                String   
   user                  user      @relation(fields: [userId], references: [id], onDelete: Cascade)
   accessToken           String?
   refreshToken          String?
@@ -81,7 +81,7 @@ model Account {
 }
 
 model Verification {
-  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  id         String    @id  @map("_id") 
   identifier String
   value      String
   expiresAt  DateTime
@@ -105,7 +105,7 @@ model Dish {
 
 model Bill {
   id     String     @id @default(auto()) @map("_id") @db.ObjectId
-  userId String     @db.ObjectId
+  userId String     
   user   user       @relation(fields: [userId], references: [id])
   date   DateTime   @default(now())
   items  BillItem[]
@@ -125,7 +125,7 @@ model BillItem {
 
 model Payment {
   id      String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId  String   @db.ObjectId
+  userId  String   
   user    user     @relation(fields: [userId], references: [id])
   amount  Float
   paidAt  DateTime @default(now())
