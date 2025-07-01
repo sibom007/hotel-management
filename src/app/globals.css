@@ -4,15 +4,14 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  
+
   --color-background: var(--background);
   --color-primary: var(--primary);
   --color-secondary: var(--secondary);
   --color-accent: var(--accent);
   --text-mainText: var(--text);
   --color-card: var(--card);
-  
-  
+
   --color-foreground: var(--foreground);
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary-foreground: var(--secondary-foreground);

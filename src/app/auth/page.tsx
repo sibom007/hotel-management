@@ -1,15 +1,19 @@
 import { auth } from "@/lib/auth";
+import AuthView from "@/modules/auth/view/Auth-view";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import React from "react";
 
-export default async function Home() {
+async function Page() {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
 
-  if (!session) {
-    redirect("/auth");
+  if (session) {
+    redirect("/");
   }
 
-  return <div>hello</div>;
+  return <AuthView />;
 }
+
+export default Page;
